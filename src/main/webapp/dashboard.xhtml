@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>Dashboard</title>
+</h:head>
+<h:body>
+    <h:form>
+        <h:panelGrid columns="2">
+            <h:outputLabel for="title" value="Task Title:"/>
+            <h:inputText id="title" value="#{taskManagementBean.newTask.title}" required="true"/>
+
+            <h:outputLabel for="description" value="Description:"/>
+            <h:inputTextarea id="description" value="#{taskManagementBean.newTask.description}"/>
+
+            <h:outputLabel for="priority" value="Priority:"/>
+            <h:selectOneMenu id="priority" value="#{taskManagementBean.newTask.priority}">
+                <f:selectItems value="#{taskManagementBean.priorities}"/>
+            </h:selectOneMenu>
+
+            <h:outputLabel for="category" value="Category:"/>
+            <h:selectOneMenu id="category" value="#{taskManagementBean.newTask.category}">
+                <f:selectItems value="#{taskManagementBean.categories}" var="category" itemLabel="#{category.name}" itemValue="#{category}"/>
+            </h:selectOneMenu>
+
+            <h:commandButton value="Add Task" action="#{taskManagementBean.createTask}"/>
+        </h:panelGrid>
+    </h:form>
+
+    <h:form>
+        <h:panelGrid columns="2">
+            <h:outputLabel for="categoryName" value="Category Name:"/>
+            <h:inputText id="categoryName" value="#{taskManagementBean.newCategory.name}" required="true"/>
+
+            <h:commandButton value="Add Category" action="#{taskManagementBean.createCategory}"/>
+        </h:panelGrid>
+    </h:form>
+
+    <h:form>
+        <h:dataTable value="#{taskManagementBean.tasks}" var="task">
+            <h:column>
+                <f:facet name="header">Title</f:facet>
+                #{task.title}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Description</f:facet>
+                #{task.description}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Priority</f:facet>
+                #{task.priority}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Category</f:facet>
+                #{task.category.name}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Status</f:facet>
+                #{task.status}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Actions</f:facet>
+                <h:commandButton value="Complete" action="#{taskManagementBean.completeTask(task)}" rendered="#{task.status eq 'ACTIVE'}"/>
+                <h:commandButton value="Delete" action="#{taskManagementBean.deleteTask(task)}"/>
+            </h:column>
+        </h:dataTable>
+    </h:form>
+
+    <h:form>
+        <h:dataTable value="#{taskManagementBean.categories}" var="category">
+            <h:column>
+                <f:facet name="header">Category Name</f:facet>
+                #{category.name}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Actions</f:facet>
+                <h:commandButton value="Delete" action="#{taskManagementBean.deleteCategory(category)}"/>
+            </h:column>
+        </h:dataTable>
+    </h:form>
+
+    <h:form>
+        <h:commandButton value="Logout" action="#{loginBean.logout}"/>
+    </h:form>
+
+    <h:panelGroup layout="block">
+        <h2>Statistics</h2>
+        <h:panelGrid columns="2">
+            <h:outputText value="Completed Tasks:"/>
+            <h:outputText value="#{taskManagementBean.completedTasksCount}"/>
+
+            <h:outputText value="Active Tasks:"/>
+            <h:outputText value="#{taskManagementBean.activeTasksCount}"/>
+
+            <h:outputText value="Overdue Tasks:"/>
+            <h:outputText value="#{taskManagementBean.overdueTasksCount}"/>
+        </h:panelGrid>
+
+        <h3>Tasks by Category</h3>
+        <ui:repeat value="#{taskManagementBean.tasksCountByCategory.entrySet().toArray()}" var="entry">
+            <h:outputText value="#{entry.key}: #{entry.value}"/><br/>
+        </ui:repeat>
+
+        <h3>Tasks by Priority</h3>
+        <ui:repeat value="#{taskManagementBean.tasksCountByPriority.entrySet().toArray()}" var="entry">
+            <h:outputText value="#{entry.key}: #{entry.value}"/><br/>
+        </ui:repeat>
+    </h:panelGroup>
+</h:body>
+</html>
